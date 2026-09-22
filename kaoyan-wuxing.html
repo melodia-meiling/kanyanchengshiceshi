@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>考研择校：五行告诉你，你该去哪座城市</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f7f3eb;
+    color: #3d3327;
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* 顶部 */
+  header {
+    text-align: center;
+    padding: 30px 10px 24px;
+  }
+  header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d4a3e;
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+  header .gold-line {
+    width: 48px;
+    height: 2px;
+    background: #c9a96e;
+    margin: 14px auto;
+  }
+  header .subtitle {
+    font-size: 13px;
+    color: #8a7d6b;
+    letter-spacing: 0.5px;
+  }
+
+  /* 卡片 */
+  .card {
+    background: #fffdf8;
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(61, 51, 39, 0.06);
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-num {
+    font-size: 12px;
+    color: #c9a96e;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .question-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d4a3e;
+    margin-bottom: 14px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    padding: 12px 14px;
+    border: 1.5px solid #e5dcc8;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+    color: #3d3327;
+  }
+  .option:hover { border-color: #c9a96e; }
+  .option.selected {
+    border-color: #2d4a3e;
+    background: #f0ece0;
+    color: #2d4a3e;
+    font-weight: 500;
+  }
+  .option .tag {
+    display: block;
+    font-size: 11px;
+    color: #a89880;
+    margin-top: 4px;
+  }
+
+  /* 按钮 */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: opacity 0.2s;
+  }
+  .btn-primary {
+    background: #2d4a3e;
+    color: #f7f3eb;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-outline {
+    background: transparent;
+    color: #2d4a3e;
+    border: 1.5px solid #2d4a3e;
+    margin-top: 14px;
+  }
+
+  .toast {
+    text-align: center;
+    font-size: 13px;
+    color: #b5533c;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* 结果页 */
+  #resultArea { display: none; }
+  .result-main {
+    text-align: center;
+    padding: 10px 0 6px;
+  }
+  .element-badge {
+    display: inline-block;
+    width: 72px;
+    height: 72px;
+    line-height: 72px;
+    border-radius: 50%;
+    font-size: 36px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .el-jin { background: #c9a96e; }
+  .el-mu  { background: #5a7a4f; }
+  .el-shui{ background: #4a6b7c; }
+  .el-huo { background: #b5533c; }
+  .el-tu  { background: #8a6d3b; }
+
+  .element-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2d4a3e;
+    margin-bottom: 4px;
+  }
+  .personality {
+    font-size: 14px;
+    color: #6b5d4d;
+    margin-bottom: 18px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    color: #c9a96e;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .section-body {
+    font-size: 14px;
+    color: #3d3327;
+    margin-bottom: 16px;
+  }
+  .city-tags {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .city-tag {
+    padding: 6px 16px;
+    background: #f0ece0;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #2d4a3e;
+  }
+  .advice {
+    background: #f0ece0;
+    border-left: 3px solid #c9a96e;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #3d3327;
+    text-align: left;
+  }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: #a89880;
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>考研择校：五行告诉你<br>你该去哪座城市</h1>
+    <div class="gold-line"></div>
+    <div class="subtitle">本测试仅供娱乐参考，结果因人而异</div>
+  </header>
+
+  <div id="quizArea"></div>
+
+  <div class="toast" id="toast"></div>
+  <button class="btn btn-primary" id="submitBtn" onclick="submitQuiz()">查看结果</button>
+
+  <div id="resultArea">
+    <div class="card">
+      <div class="result-main">
+        <div class="element-badge" id="elBadge">金</div>
+        <div class="element-name" id="elName">金</div>
+        <div class="personality" id="elPersonality"></div>
+      </div>
+
+      <div class="section-label">适合你的城市类型</div>
+      <div class="section-body" id="elCityType"></div>
+
+      <div class="section-label">推荐城市</div>
+      <div class="city-tags" id="elCities"></div>
+
+      <div class="section-label">考研择校建议</div>
+      <div class="advice" id="elAdvice"></div>
+    </div>
+
+    <button class="btn btn-outline" onclick="resetQuiz()">重新测试</button>
+    <div class="disclaimer">本测试仅供娱乐参考，结果因人而异，<br>不构成任何择校建议</div>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "你更看重学校的什么？",
+      options: [
+        { text: "学术氛围浓，能沉下心做研究", tag: "+2木，+1水", score: { mu: 2, shui: 1 } },
+        { text: "城市机会多，实习就业路子宽", tag: "+2火，+1金", score: { huo: 2, jin: 1 } },
+        { text: "离家近，周末能回家吃妈妈做的饭", tag: "+2土，+1水", score: { tu: 2, shui: 1 } },
+        { text: "生活成本友好，奖学金够花", tag: "+2金，+1土", score: { jin: 2, tu: 1 } }
+      ]
+    },
+    {
+      q: "你理想的研究生生活是什么样？",
+      options: [
+        { text: "图书馆常驻，论文越写越上头", tag: "+2木，+1金", score: { mu: 2, jin: 1 } },
+        { text: "白天上课晚上实习，简历塞满经历", tag: "+2火，+1金", score: { huo: 2, jin: 1 } },
+        { text: "周末探店逛展，把城市玩个遍", tag: "+2水，+1火", score: { shui: 2, huo: 1 } },
+        { text: "按部就班毕业，不卷不躺刚刚好", tag: "+2土，+1金", score: { tu: 2, jin: 1 } }
+      ]
+    },
+    {
+      q: "你更适应哪种气候？",
+      options: [
+        { text: "四季分明，冬天有暖气夏天有空调", tag: "+2金，+1土", score: { jin: 2, tu: 1 } },
+        { text: "温润潮湿，植被丰富鸟语花香", tag: "+2木，+1水", score: { mu: 2, shui: 1 } },
+        { text: "靠江靠海，风一吹脑子就清醒", tag: "+2水，+1金", score: { shui: 2, jin: 1 } },
+        { text: "热热闹闹，夏天深夜街头还有人", tag: "+2火，+1土", score: { huo: 2, tu: 1 } }
+      ]
+    },
+    {
+      q: "你更喜欢什么样的城市节奏？",
+      options: [
+        { text: "高效紧凑，地铁里大家都在赶路", tag: "+2金，+1火", score: { jin: 2, huo: 1 } },
+        { text: "慢下来，一杯咖啡坐一下午", tag: "+2水，+1木", score: { shui: 2, mu: 1 } },
+        { text: "充满活力，到处都是新鲜事儿", tag: "+2火，+1木", score: { huo: 2, mu: 1 } },
+        { text: "安稳踏实，邻里之间都熟络", tag: "+2土，+1木", score: { tu: 2, mu: 1 } }
+      ]
+    },
+    {
+      q: "面对考研/论文压力，你的反应是？",
+      options: [
+        { text: "立刻拆解目标，一项项干掉", tag: "+2金，+1火", score: { jin: 2, huo: 1 } },
+        { text: "找朋友吃顿火锅，情绪先落地", tag: "+2水，+1火", score: { shui: 2, huo: 1 } },
+        { text: "出去跑一圈/爬个山，出出汗就好了", tag: "+2木，+1火", score: { mu: 2, huo: 1 } },
+        { text: "按自己的节奏来，不着急", tag: "+2土，+1金", score: { tu: 2, jin: 1 } }
+      ]
+    },
+    {
+      q: "你希望毕业后留在什么类型的城市？",
+      options: [
+        { text: "一线大都市，平台大资源多", tag: "+2金，+1火", score: { jin: 2, huo: 1 } },
+        { text: "新兴城市，到处是机会和可能性", tag: "+2木，+1火", score: { mu: 2, huo: 1 } },
+        { text: "宜居慢城，生活幸福感高", tag: "+2水，+1土", score: { shui: 2, tu: 1 } },
+        { text: "家附近的城市，稳定又熟悉", tag: "+2土，+1水", score: { tu: 2, shui: 1 } }
+      ]
+    }
+  ];
+
+  const results = {
+    jin: {
+      name: "金",
+      cls: "el-jin",
+      personality: "果断、目标感强，一旦定下方向就会全力以赴。",
+      cityType: "适合规则清晰、资源集中、效率高的城市。",
+      cities: ["北京", "上海", "西安"],
+      advice: "优先选专业排名靠前的学校，城市资源能放大你的执行力。"
+    },
+    mu: {
+      name: "木",
+      cls: "el-mu",
+      personality: "成长型人格，喜欢探索新事物，停不下来。",
+      cityType: "适合绿化好、有活力、年轻人多的城市。",
+      cities: ["成都", "杭州", "深圳"],
+      advice: "选一个能让你持续接触新事物的城市，比选一个安稳的城市更重要。"
+    },
+    shui: {
+      name: "水",
+      cls: "el-shui",
+      personality: "感性、适应力强，能在不同环境里游刃有余。",
+      cityType: "适合临江沿海、文化氛围浓、节奏可快可慢的城市。",
+      cities: ["南京", "武汉", "厦门"],
+      advice: "优先考虑城市的文化资源和实习机会，你的潜力需要被环境激发。"
+    },
+    huo: {
+      name: "火",
+      cls: "el-huo",
+      personality: "热情、行动力强，社交就是你的能量来源。",
+      cityType: "适合热闹、机会多、夜生活丰富的城市。",
+      cities: ["广州", "长沙", "重庆"],
+      advice: "选一个能让你快速进入圈子的城市，闷头读书反而不适合你。"
+    },
+    tu: {
+      name: "土",
+      cls: "el-tu",
+      personality: "稳重、耐力强，认准一件事就能长期扎根。",
+      cityType: "适合生活成本适中、节奏平稳、人情味浓的城市。",
+      cities: ["郑州", "合肥", "济南"],
+      advice: "选一个能让你安心长期待下去的城市，稳扎稳打是你的优势。"
+    }
+  };
+
+  const answers = new Array(questions.length).fill(null);
+
+  function renderQuiz() {
+    const area = document.getElementById('quizArea');
+    area.innerHTML = questions.map((item, qi) => `
+      <div class="card">
+        <div class="question-num">第 ${qi + 1} 题 / 共 ${questions.length} 题</div>
+        <div class="question-text">${item.q}</div>
+        <div class="options">
+          ${item.options.map((opt, oi) => `
+            <div class="option" data-q="${qi}" data-o="${oi}" onclick="selectOption(${qi},${oi})">
+              ${opt.text}
+              <span class="tag">${opt.tag}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function selectOption(qi, oi) {
+    answers[qi] = oi;
+    document.querySelectorAll(`.option[data-q="${qi}"]`).forEach(el => {
+      el.classList.toggle('selected', parseInt(el.dataset.o) === oi);
+    });
+    document.getElementById('toast').textContent = '';
+  }
+
+  function submitQuiz() {
+    const unanswered = answers.findIndex(a => a === null);
+    if (unanswered !== -1) {
+      document.getElementById('toast').textContent = '还有题目没选哦';
+      return;
+    }
+
+    const score = { jin: 0, mu: 0, shui: 0, huo: 0, tu: 0 };
+    answers.forEach((oi, qi) => {
+      const s = questions[qi].options[oi].score;
+      for (const k in s) score[k] += s[k];
+    });
+
+    let maxKey = 'jin', maxVal = -1;
+    for (const k in score) {
+      if (score[k] > maxVal) { maxVal = score[k]; maxKey = k; }
+    }
+
+    const r = results[maxKey];
+    const badge = document.getElementById('elBadge');
+    badge.textContent = r.name;
+    badge.className = 'element-badge ' + r.cls;
+    document.getElementById('elName').textContent = '你是「' + r.name + '」属性';
+    document.getElementById('elPersonality').textContent = r.personality;
+    document.getElementById('elCityType').textContent = r.cityType;
+    document.getElementById('elCities').innerHTML =
+      r.cities.map(c => `<span class="city-tag">${c}</span>`).join('');
+    document.getElementById('elAdvice').textContent = r.advice;
+
+    document.getElementById('quizArea').style.display = 'none';
+    document.getElementById('submitBtn').style.display = 'none';
+    document.getElementById('toast').textContent = '';
+    document.getElementById('resultArea').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetQuiz() {
+    answers.fill(null);
+    renderQuiz();
+    document.getElementById('resultArea').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('submitBtn').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  renderQuiz();
+</script>
+</body>
+</html>
